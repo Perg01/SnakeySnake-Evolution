@@ -111,6 +111,13 @@ class Snake extends GameObject implements  Drawable {
         return false;
     }
 
+    boolean checkCollision(Point location) {
+        if (!segmentLocations.isEmpty() && segmentLocations.get(0).equals(location)) {
+            return true;
+        }
+        return false;
+    }
+
     void switchHeading(MotionEvent motionEvent) {
         heading = (motionEvent.getX() >= halfWayPoint) ? getNextClockwiseHeading() : getNextCounterClockwiseHeading();
     }
@@ -164,5 +171,11 @@ class Snake extends GameObject implements  Drawable {
         matrix.preRotate(angle);
         return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
+
+    public int getSegmentSize() {
+        return mSegmentSize;
+    }
+
+
 }
 
