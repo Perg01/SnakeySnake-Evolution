@@ -48,6 +48,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private boolean mPlayerDead = true;
     private Bitmap mBitmapBackground;
     private long mNextFrameTime;
+    private int x;
+    private int y;
 
 
     public void setTargetFPS(int fps) {
@@ -71,6 +73,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mPaint = new Paint();
         mSnake = new Snake(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
         mApple = new Apple(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+        this.x = size.x;
+        this.y = size.y;
 
         // separate list of power ups
         lightningPowerUps = new ArrayList<>();
@@ -164,7 +168,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private void drawBackground() {
         mCanvas.drawColor(Color.argb(205, 11, 8, 102));
         mBitmapBackground = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.hxh);
-        mBitmapBackground = Bitmap.createScaledBitmap(mBitmapBackground, 2300, 1280, false);
+        mBitmapBackground = Bitmap.createScaledBitmap(mBitmapBackground, x, y, false);
         mCanvas.drawBitmap(mBitmapBackground, 0, 0, mPaint);
     }
 
