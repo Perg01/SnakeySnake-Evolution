@@ -13,6 +13,8 @@ public class SoundManager {
 
     private SoundPool mSoundPool;
     private int mEatSoundId;
+
+    private int mSmallerId;
     private int mCrashSoundId;
 
     public SoundManager(Context context) {
@@ -41,6 +43,9 @@ public class SoundManager {
             descriptor = assetManager.openFd("snake_death.ogg");
             mCrashSoundId = mSoundPool.load(descriptor, 0);
 
+            descriptor = assetManager.openFd("pixel-death-66829.mp3");
+            mSmallerId = mSoundPool.load(descriptor, 0);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,6 +59,7 @@ public class SoundManager {
         mSoundPool.play(mCrashSoundId, 1, 1, 0, 0, 1);
     }
 
+    public void playSmallerSound(){mSoundPool.play(mSmallerId, 1, 1, 0, 0, 1);}
     public void release() {
         mSoundPool.release();
     }

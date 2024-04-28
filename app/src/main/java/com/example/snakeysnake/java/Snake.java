@@ -15,13 +15,14 @@ import java.util.ArrayList;
 class Snake extends GameObject implements  Drawable {
 
     private final ArrayList<Point> segmentLocations;
-    private final int mSegmentSize;
+    private int mSegmentSize;
     private final Point mMoveRange;
     private final int halfWayPoint;
     private enum Heading { UP, RIGHT, DOWN, LEFT }
     private Heading heading = Heading.RIGHT;
     private final Bitmap[] mBitmapHeads = new Bitmap[4];
     private Bitmap mBitmapBody;
+    private boolean doubleSize;
 
     Snake(Context context, Point moveRange, int segmentSize) {
         this.segmentLocations = new ArrayList<>();
@@ -36,7 +37,37 @@ class Snake extends GameObject implements  Drawable {
         this.mBitmapBody = BitmapFactory.decodeResource(context.getResources(), R.drawable.cloud);
 
         this.halfWayPoint = moveRange.x * segmentSize / 2;
+        this.doubleSize = false;
     }
+    
+    public void doubleSize(){
+        for (int i = 0; i < mBitmapHeads.length; i++) {
+            mBitmapHeads[i] = Bitmap.createScaledBitmap(mBitmapHeads[i],
+                    mBitmapHeads[i].getWidth() * 2,
+                    mBitmapHeads[i].getHeight() * 2,
+                    false);
+        }
+        mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
+                mBitmapBody.getWidth() * 2,
+                mBitmapBody.getHeight() * 2,
+                false);
+        this.setDoubleSize(true);
+    }
+
+    public void halfSize(){
+        for (int i = 0; i < mBitmapHeads.length; i++) {
+            mBitmapHeads[i] = Bitmap.createScaledBitmap(mBitmapHeads[i],
+                    mBitmapHeads[i].getWidth() / 2,
+                    mBitmapHeads[i].getHeight() / 2,
+                    false);
+        }
+        mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
+                mBitmapBody.getWidth() / 2,
+                mBitmapBody.getHeight() / 2,
+                false);
+        this.setDoubleSize(false);
+    }
+
 
     @Override
     public void spawn() {
@@ -176,6 +207,16 @@ class Snake extends GameObject implements  Drawable {
         return mSegmentSize;
     }
 
+    public void setmSegmentSize(int mSegmentSize) {
+        this.mSegmentSize = mSegmentSize;
+    }
 
+    public boolean isDoubleSize() {
+        return doubleSize;
+    }
+
+    public void setDoubleSize(boolean doubleSize) {
+        this.doubleSize = doubleSize;
+    }
 }
 
