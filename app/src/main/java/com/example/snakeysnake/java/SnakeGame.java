@@ -91,8 +91,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         spawnSizeUpPowerUp(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
 
         // In your game code, where you create and manage powerups
-        Powerup lightningPowerup = new Powerup(new LightningPowerupSound());
-        Powerup speedPowerup = new Powerup(new SpeedPowerupSound());
+        Powerup lightningPowerup = new Powerup(new LightningPowerupSound(context));
+        Powerup speedPowerup = new Powerup(new SpeedPowerupSound(context));
 
         // When a powerup is applied
         lightningPowerup.applyPowerup(); // This will play the sound for the lightning powerup
@@ -104,8 +104,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         PowerUpDecoder.initializePowerUpDecoder(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
     }
 
-    private void spawnSizeUpPowerUp(Context context, Point spaqnRange, int size){
-        SizeUpPowerUp powerup = new SizeUpPowerUp(context, spaqnRange, size);
+    private void spawnSizeUpPowerUp(Context context, Point spawnRange, int size){
+        SizeUpPowerUp powerup = new SizeUpPowerUp(context, spawnRange, size);
         powerup.spawn();
         sizeUpPowerUps.add(powerup);
     }
