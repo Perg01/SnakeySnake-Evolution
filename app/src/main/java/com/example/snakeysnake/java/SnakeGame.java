@@ -90,6 +90,14 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         spawnLightningPowerUp(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
         spawnSizeUpPowerUp(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
 
+        // In your game code, where you create and manage powerups
+        Powerup lightningPowerup = new Powerup(new LightningPowerupSound());
+        Powerup speedPowerup = new Powerup(new SpeedPowerupSound());
+
+        // When a powerup is applied
+        lightningPowerup.applyPowerup(); // This will play the sound for the lightning powerup
+        speedPowerup.applyPowerup(); // This will play the sound for the speed powerup
+
         int buttonSize = blockSize * 3;
         mPauseButtonRect = new Rect(0, size.y - buttonSize, buttonSize, size.y);
 
