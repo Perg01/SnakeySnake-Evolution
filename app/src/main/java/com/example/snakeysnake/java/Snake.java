@@ -29,10 +29,10 @@ class Snake extends GameObject implements  Drawable {
         this.mSegmentSize = segmentSize;
         this.mMoveRange = moveRange;
 
-        this.mBitmapHeads[Heading.RIGHT.ordinal()] = BitmapFactory.decodeResource(context.getResources(), R.drawable.helmet);
+        this.mBitmapHeads[Heading.RIGHT.ordinal()] = BitmapFactory.decodeResource(context.getResources(), R.drawable.nightrider);
         this.mBitmapHeads[Heading.LEFT.ordinal()] = flipBitmap(mBitmapHeads[Heading.RIGHT.ordinal()]);
         this.mBitmapHeads[Heading.UP.ordinal()] = rotateBitmap(mBitmapHeads[Heading.RIGHT.ordinal()], -90);
-        this.mBitmapHeads[Heading.DOWN.ordinal()] = rotateBitmap(mBitmapHeads[Heading.RIGHT.ordinal()], 180);
+        this.mBitmapHeads[Heading.DOWN.ordinal()] = rotateBitmap(mBitmapHeads[Heading.RIGHT.ordinal()], 90);
 
         this.mBitmapBody = BitmapFactory.decodeResource(context.getResources(), R.drawable.cloud);
 
@@ -93,6 +93,7 @@ class Snake extends GameObject implements  Drawable {
     @Override
     public void draw(){
         // Implement if necessary
+
     }
 
     void reset(int width, int height) {
@@ -196,6 +197,7 @@ class Snake extends GameObject implements  Drawable {
 
     private Bitmap rotateBitmap(Bitmap src, float angle) {
         Matrix matrix = new Matrix();
+        //matrix.preRotate(angle, src.getWidth() / 2f, src.getHeight() / 2f);
         matrix.preRotate(angle);
         return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }

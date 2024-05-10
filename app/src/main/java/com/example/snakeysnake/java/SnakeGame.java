@@ -144,6 +144,9 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
             mSoundManager.playCrashSound();
             mPaused = true;
             mPlayerDead = true;
+            if(mSnake.isDoubleSize()){
+                mSnake.halfSize();
+            }
         } else {
             mPlayerDead = false;
         }
@@ -217,7 +220,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
 
     private void drawBackground() {
         mCanvas.drawColor(Color.argb(205, 11, 8, 102));
-        mBitmapBackground = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.hxh);
+        mBitmapBackground = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.nightriderbg);
         mBitmapBackground = Bitmap.createScaledBitmap(mBitmapBackground, x, y, false);
         mCanvas.drawBitmap(mBitmapBackground, 0, 0, mPaint);
     }
