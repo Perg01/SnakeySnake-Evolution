@@ -188,6 +188,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                     PowerUps mPowerUp = PowerUpDecoder.decodePowerUp("Mushroom");
                     //mPowerUp.applyPowerUps(this);
                     mSnake.doubleSize();
+                    mBlackHoles.remove(mBlackHoles.size()-1);
                     mIterator.remove();
                     this.setmPowerUpTimer(System.nanoTime());
                     mSoundManager.playEatSound();
@@ -205,7 +206,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
 //            }
 //        }
 
-        if(checkTimer(mBlackHoleTimer) > 10){
+        if(checkTimer(mBlackHoleTimer) > 8){
             spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
             mSoundManager.playBlackHoleSound();
             this.setBlackHolesTimer(System.nanoTime());
