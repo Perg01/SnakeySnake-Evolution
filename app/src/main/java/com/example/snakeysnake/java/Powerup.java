@@ -1,7 +1,7 @@
 package com.example.snakeysnake.java;
 
 public class Powerup {
-    private PowerupSoundStrategy soundStrategy;
+    private final PowerupSoundStrategy soundStrategy;
 
     public Powerup(PowerupSoundStrategy soundStrategy) {
         this.soundStrategy = soundStrategy;

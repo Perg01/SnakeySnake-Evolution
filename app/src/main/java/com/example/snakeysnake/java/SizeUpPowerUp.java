@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class SizeUpPowerUp implements PowerUps{
 
-    private Context context;
+    private final Context context;
     private final Point spawnRange;
     private final int size;
     private Bitmap mushroomBitmap;

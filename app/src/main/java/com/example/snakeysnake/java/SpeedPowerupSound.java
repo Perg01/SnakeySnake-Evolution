@@ -11,7 +11,7 @@ import android.os.Build;
 import java.io.IOException;
 
 public class SpeedPowerupSound implements PowerupSoundStrategy {
-    private SoundPool mSoundPool;
+    private final SoundPool mSoundPool;
     private int mSpeedPowerupSound;
 
     public SpeedPowerupSound(Context context) {

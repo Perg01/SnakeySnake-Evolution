@@ -14,7 +14,7 @@ import java.util.Random;
 public class LightningPowerUp implements PowerUps {
 
 //    private static final int SPEED_UP_FPS = 10;
-    private Context context;
+    private final Context context;
     private final Point spawnRange;
     private final int size;
     private Bitmap lightningBitmap;

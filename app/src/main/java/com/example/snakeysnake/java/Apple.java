@@ -12,7 +12,7 @@ import com.example.snakeysnake.R;
 
 class Apple extends GameObject implements Drawable {
 
-    private Point location = new Point();
+    private final Point location = new Point();
     private final Point spawnRange;
     private final int size;
     private Bitmap bitmapApple;

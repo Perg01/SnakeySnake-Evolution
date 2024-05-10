@@ -143,10 +143,7 @@ class Snake extends GameObject implements  Drawable {
     }
 
     boolean checkCollision(Point location) {
-        if (!segmentLocations.isEmpty() && segmentLocations.get(0).equals(location)) {
-            return true;
-        }
-        return false;
+        return !segmentLocations.isEmpty() && segmentLocations.get(0).equals(location);
     }
 
     void switchHeading(MotionEvent motionEvent) {

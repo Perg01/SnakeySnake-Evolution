@@ -14,12 +14,12 @@ import java.io.IOException;
 
 public class SoundManager {
 
-    private SoundPool mSoundPool;
+    private final SoundPool mSoundPool;
     private int mEatSoundId;
 
     private int mSmallerId;
     private int mCrashSoundId;
-    private MediaPlayer backGroundMusic;
+    private final MediaPlayer backGroundMusic;
 
     public SoundManager(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -55,8 +55,9 @@ public class SoundManager {
             e.printStackTrace();
         }
 
-        backGroundMusic = MediaPlayer.create(context, R.raw.lifeofsinoriginalmix);
+        backGroundMusic = MediaPlayer.create(context, R.raw.ontheroadtotheeighties);
         backGroundMusic.setLooping(true);
+        backGroundMusic.setVolume(0.75f, 0.75f);
 
     }
 

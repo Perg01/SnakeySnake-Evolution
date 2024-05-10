@@ -11,7 +11,7 @@ import android.os.Build;
 import java.io.IOException;
 
 public class LightningPowerupSound implements PowerupSoundStrategy {
-    private SoundPool mSoundPool;
+    private final SoundPool mSoundPool;
     private int mLightningPowerUpSound;
 
     public LightningPowerupSound(Context context) {
