@@ -22,13 +22,13 @@ import com.example.snakeysnake.R;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import android.media.MediaPlayer;
 
 public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, Drawable {
 
-//    private List<Apple> apples;
+    //    private List<Apple> apples;
     private List<LightningPowerUp> lightningPowerUps;
     private List<SizeUpPowerUp> sizeUpPowerUps;
+    private List<BlackHole> mBlackHoles;
     private static final int DEFAULT_TARGET_FPS = 5;
     private static int TARGET_FPS = DEFAULT_TARGET_FPS;
     private static final long MILLIS_PER_SECOND = 1000;
@@ -41,6 +41,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
     private int mScore;
+    private int blockSize;
     private Canvas mCanvas;
     private SurfaceHolder mSurfaceHolder;
     private Paint mPaint;
@@ -52,7 +53,9 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private long mNextFrameTime;
     private int x;
     private int y;
-    private double mTimer;
+    private double mPowerUpTimer;
+
+    private double mBlackHoleTimer;
     private boolean musicFlag = false;
 
 
@@ -70,7 +73,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     }
 
     private void initGame(Context context, Point size) {
-        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        blockSize = size.x / NUM_BLOCKS_WIDE;
         mNumBlocksHigh = size.y / blockSize;
         mSoundManager = new SoundManager(context);
         mSurfaceHolder = getHolder();
@@ -79,21 +82,22 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mApple = new Apple(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
         this.x = size.x;
         this.y = size.y;
-        this.setmTimer(0);
-
+        this.setmPowerUpTimer(0);
 
 
         // separate list of power ups
         lightningPowerUps = new ArrayList<>();
         sizeUpPowerUps = new ArrayList<>();
 
+        // seperate list of obsticles
+        mBlackHoles = new ArrayList<>();
+
         //calls methods to spawn obtainable objects/power-ups in game
         spawnLightningPowerUp(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
         spawnSizeUpPowerUp(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
-
-        // In your game code, where you create and manage powerups
-        Powerup lightningPowerup = new Powerup(new LightningPowerupSound(context));
         Powerup speedPowerup = new Powerup(new SpeedPowerupSound(context));
+        Powerup lightningPowerup = new Powerup(new LightningPowerupSound(context));
+
 
         // When a powerup is applied
         lightningPowerup.applyPowerup(); // This will play the sound for the lightning powerup
@@ -105,7 +109,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         PowerUpDecoder.initializePowerUpDecoder(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
     }
 
-    private void spawnSizeUpPowerUp(Context context, Point spawnRange, int size){
+    private void spawnSizeUpPowerUp(Context context, Point spawnRange, int size) {
         SizeUpPowerUp powerup = new SizeUpPowerUp(context, spawnRange, size);
         powerup.spawn();
         sizeUpPowerUps.add(powerup);
@@ -115,6 +119,12 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         LightningPowerUp powerUp = new LightningPowerUp(context, spawnRange, size);
         powerUp.spawn();
         lightningPowerUps.add(powerUp);
+    }
+
+    private void spawnBlackHole(Context context, Point spawnRange, int size) {
+        BlackHole blackHole = new BlackHole(context, spawnRange, size);
+        blackHole.spawn();
+        mBlackHoles.add(blackHole);
     }
 
     @Override
@@ -144,7 +154,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
             mSoundManager.playCrashSound();
             mPaused = true;
             mPlayerDead = true;
-            if(mSnake.isDoubleSize()){
+            if (mSnake.isDoubleSize()) {
                 mSnake.halfSize();
             }
         } else {
@@ -166,12 +176,12 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         Iterator<SizeUpPowerUp> mIterator = sizeUpPowerUps.iterator();
 
         //If snake eats mushroom grow *2 for 10 seconds
-        if(!mIterator.hasNext() && checkTimer(mTimer) >= 10) {
+        if (!mIterator.hasNext() && checkTimer(mPowerUpTimer) >= 10) {
             mSoundManager.playSmallerSound();
             mSnake.halfSize();
             spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
 
-        } else if(mIterator.hasNext()){
+        } else if (mIterator.hasNext()) {
             while (mIterator.hasNext()) {
                 SizeUpPowerUp sizeUpPowerUp = mIterator.next();
                 if (mSnake.checkCollision(sizeUpPowerUp.getLocation())) {
@@ -179,7 +189,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                     //mPowerUp.applyPowerUps(this);
                     mSnake.doubleSize();
                     mIterator.remove();
-                    this.setmTimer(System.nanoTime());
+                    this.setmPowerUpTimer(System.nanoTime());
                     mSoundManager.playEatSound();
                     break;
                 }
@@ -195,7 +205,25 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
 //            }
 //        }
 
-        if(mPlayerDead){
+        if(checkTimer(mBlackHoleTimer) > 10){
+            spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
+            mSoundManager.playBlackHoleSound();
+            this.setBlackHolesTimer(System.nanoTime());
+        }
+
+        Iterator<BlackHole> bIterator = mBlackHoles.iterator();
+        while (bIterator.hasNext()) {
+            BlackHole blackHole = bIterator.next();
+            if (mSnake.checkCollision(blackHole.getLocation())) {
+                mPlayerDead = true;
+                mPaused = true;
+                mSoundManager.playCrashSound();
+                break;
+            }
+        }
+
+
+        if (mPlayerDead) {
             mSoundManager.getBgMusic().pause();
             mSoundManager.getBgMusic().seekTo(0);
             musicFlag = !musicFlag;
@@ -236,11 +264,14 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mApple.draw(mCanvas, mPaint);
         mSnake.draw(mCanvas, mPaint);
 
-        for (LightningPowerUp lightningPowerUp: lightningPowerUps) {
-            lightningPowerUp.draw(mCanvas,mPaint);
+        for (LightningPowerUp lightningPowerUp : lightningPowerUps) {
+            lightningPowerUp.draw(mCanvas, mPaint);
         }
-        for (SizeUpPowerUp sizeUpPowerUp: sizeUpPowerUps) {
-            sizeUpPowerUp.draw(mCanvas,mPaint);
+        for (SizeUpPowerUp sizeUpPowerUp : sizeUpPowerUps) {
+            sizeUpPowerUp.draw(mCanvas, mPaint);
+        }
+        for(BlackHole blackHole : mBlackHoles){
+            blackHole.draw(mCanvas, mPaint);
         }
     }
 
@@ -292,9 +323,6 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     }
 
 
-
-
-
     @Override
     public void draw(Canvas canvas, Paint paint) {
     }
@@ -305,14 +333,15 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         int y = (int) motionEvent.getY();
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
-                if(!mSoundManager.getBgMusic().isPlaying() && !musicFlag){
+                if (!mSoundManager.getBgMusic().isPlaying() && !musicFlag) {
                     mSoundManager.getBgMusic().start();
                     musicFlag = !musicFlag;
+                    this.setBlackHolesTimer(System.nanoTime());
                 }
                 if (mPaused) {
                     if (mPauseButtonRect.contains(x, y)) {
                         if (!mPlayerDead) { // resume
-                            if(!mSoundManager.getBgMusic().isPlaying()){
+                            if (!mSoundManager.getBgMusic().isPlaying()) {
                                 mSoundManager.getBgMusic().start();
                             }
                             mPaused = false;
@@ -322,9 +351,11 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                 } else {
                     if (mPauseButtonRect.contains(x, y)) {
                         if (!mPlayerDead) { //pause
-                            if(mSoundManager.getBgMusic().isPlaying()){
+                            if (mSoundManager.getBgMusic().isPlaying()) {
                                 mSoundManager.getBgMusic().pause();
                             }
+                            //TODO reset black hole timer
+
                             mPaused = true;
                         }
                         return true;
@@ -350,9 +381,11 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mApple.spawn();
         lightningPowerUps.clear();
         sizeUpPowerUps.clear();
+        mBlackHoles.clear();
 
-        spawnLightningPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE,mNumBlocksHigh), mSnake.getSegmentSize());
-        spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE,mNumBlocksHigh), mSnake.getSegmentSize());
+        spawnLightningPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
+        spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
+        spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
         mScore = 0;
         mNextFrameTime = System.currentTimeMillis();
         mPlayerDead = true;
@@ -379,11 +412,19 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mSoundManager = new SoundManager(getContext());
     }
 
-    public void setmTimer(double mTimer) {
-        this.mTimer = mTimer;
+    public void setmPowerUpTimer(double mPowerUpTimer) {
+        this.mPowerUpTimer = mPowerUpTimer;
     }
 
-    public double checkTimer(double startTime){
+    public void setBlackHolesTimer(double mBlackHoleTimer) {
+        this.mBlackHoleTimer = mBlackHoleTimer;
+    }
+
+    public double getmBlackHoleTimer() {
+        return mBlackHoleTimer;
+    }
+
+    public double checkTimer(double startTime) {
         double endTime = System.nanoTime();
         return (endTime - startTime) / 1_000_000_000.0; //Convert to Seconds
     }

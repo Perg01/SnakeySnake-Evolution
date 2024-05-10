@@ -19,6 +19,7 @@ public class SoundManager {
 
     private int mSmallerId;
     private int mCrashSoundId;
+    private int mBlackHoldSoundId;
     private final MediaPlayer backGroundMusic;
 
     public SoundManager(Context context) {
@@ -50,6 +51,9 @@ public class SoundManager {
             descriptor = assetManager.openFd("pixel-death-66829.mp3");
             mSmallerId = mSoundPool.load(descriptor, 0);
 
+            descriptor = assetManager.openFd("deepscanmp3-14662.mp3");
+            mBlackHoldSoundId = mSoundPool.load(descriptor, 0);
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +61,7 @@ public class SoundManager {
 
         backGroundMusic = MediaPlayer.create(context, R.raw.neongaming);
         backGroundMusic.setLooping(true);
-        backGroundMusic.setVolume(0.75f, 0.75f);
+        backGroundMusic.setVolume(0.50f, 0.50f);
 
     }
 
@@ -70,6 +74,7 @@ public class SoundManager {
     }
 
     public void playSmallerSound(){mSoundPool.play(mSmallerId, 1, 1, 0, 0, 1);}
+    public void playBlackHoleSound(){mSoundPool.play(mBlackHoldSoundId, 1, 1, 0, 0, 1);}
 
     public void release() {
         mSoundPool.release();

@@ -24,9 +24,9 @@ class Snake extends GameObject implements  Drawable {
     private Bitmap mBitmapBody;
     private boolean doubleSize;
     //Offset for drawing normal size X left, right
-    private float[] offsetX = {-1.9f, 0.5f};
+    private final float[] offsetX = {-2.3f, 0.5f};
     //Offset for drawing normal size Y Up, Down
-    private float[] offSetY = {-2.1f, 0.2f};
+    private final float[] offSetY = {-2.3f, 0.2f};
 
     Snake(Context context, Point moveRange, int segmentSize) {
         this.segmentLocations = new ArrayList<>();
@@ -53,8 +53,8 @@ class Snake extends GameObject implements  Drawable {
         }
 
         for(int i = 0; i < offsetX.length; i++){
-            offsetX[i] = offsetX[i] *2;
-            offSetY[i] = offSetY[i] * 2;
+            offsetX[i] = offsetX[i] *2.3f;
+            offSetY[i] = offSetY[i] * 2.3f;
         }
 
         mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
@@ -73,8 +73,8 @@ class Snake extends GameObject implements  Drawable {
         }
 
         for(int i = 0; i < offsetX.length; i++){
-            offsetX[i] = offsetX[i] /2;
-            offSetY[i] = offSetY[i] / 2;
+            offsetX[i] = offsetX[i] /2.3f;
+            offSetY[i] = offSetY[i] / 2.3f;
         }
 
         mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
@@ -224,6 +224,8 @@ class Snake extends GameObject implements  Drawable {
                 return heading;
         }
     }
+
+
 
     private Bitmap flipBitmap(Bitmap src) {
         Matrix matrix = new Matrix();
