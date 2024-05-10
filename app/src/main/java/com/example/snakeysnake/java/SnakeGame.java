@@ -53,6 +53,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private int x;
     private int y;
     private double mTimer;
+    private boolean musicFlag = false;
 
 
     public void setTargetFPS(int fps) {
@@ -194,6 +195,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         if(mPlayerDead){
             mSoundManager.getBgMusic().pause();
             mSoundManager.getBgMusic().seekTo(0);
+            musicFlag = !musicFlag;
         }
 
         mNextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / TARGET_FPS;
@@ -300,8 +302,9 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         int y = (int) motionEvent.getY();
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
-                if(!mSoundManager.getBgMusic().isPlaying()){
+                if(!mSoundManager.getBgMusic().isPlaying() && !musicFlag){
                     mSoundManager.getBgMusic().start();
+                    musicFlag = !musicFlag;
                 }
                 if (mPaused) {
                     if (mPauseButtonRect.contains(x, y)) {
@@ -344,8 +347,6 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mApple.spawn();
         lightningPowerUps.clear();
         sizeUpPowerUps.clear();
-
-
 
         spawnLightningPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE,mNumBlocksHigh), mSnake.getSegmentSize());
         spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE,mNumBlocksHigh), mSnake.getSegmentSize());

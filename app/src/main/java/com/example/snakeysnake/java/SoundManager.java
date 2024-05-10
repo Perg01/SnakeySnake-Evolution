@@ -55,7 +55,7 @@ public class SoundManager {
             e.printStackTrace();
         }
 
-        backGroundMusic = MediaPlayer.create(context, R.raw.ontheroadtotheeighties);
+        backGroundMusic = MediaPlayer.create(context, R.raw.neongaming);
         backGroundMusic.setLooping(true);
         backGroundMusic.setVolume(0.75f, 0.75f);
 
