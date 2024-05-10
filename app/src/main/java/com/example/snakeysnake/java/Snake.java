@@ -23,6 +23,10 @@ class Snake extends GameObject implements  Drawable {
     private final Bitmap[] mBitmapHeads = new Bitmap[4];
     private Bitmap mBitmapBody;
     private boolean doubleSize;
+    //Offset for drawing normal size X left, right
+    private float[] offsetX = {-1.9f, 0.5f};
+    //Offset for drawing normal size Y Up, Down
+    private float[] offSetY = {-2.1f, 0.2f};
 
     Snake(Context context, Point moveRange, int segmentSize) {
         this.segmentLocations = new ArrayList<>();
@@ -47,6 +51,12 @@ class Snake extends GameObject implements  Drawable {
                     mBitmapHeads[i].getHeight() * 2,
                     false);
         }
+
+        for(int i = 0; i < offsetX.length; i++){
+            offsetX[i] = offsetX[i] *2;
+            offSetY[i] = offSetY[i] * 2;
+        }
+
         mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
                 mBitmapBody.getWidth() * 2,
                 mBitmapBody.getHeight() * 2,
@@ -61,6 +71,12 @@ class Snake extends GameObject implements  Drawable {
                     mBitmapHeads[i].getHeight() / 2,
                     false);
         }
+
+        for(int i = 0; i < offsetX.length; i++){
+            offsetX[i] = offsetX[i] /2;
+            offSetY[i] = offSetY[i] / 2;
+        }
+
         mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody,
                 mBitmapBody.getWidth() / 2,
                 mBitmapBody.getHeight() / 2,
@@ -83,7 +99,27 @@ class Snake extends GameObject implements  Drawable {
     public void draw(Canvas canvas, Paint paint) {
         if (!segmentLocations.isEmpty()) {
             int headIndex = heading.ordinal();
-            canvas.drawBitmap(mBitmapHeads[headIndex], segmentLocations.get(0).x * mSegmentSize, segmentLocations.get(0).y * mSegmentSize, paint);
+            Point headLocation = segmentLocations.get(0);
+
+            float offSetX = 0;
+            float offSetY = 0;
+
+            switch (heading){
+                case UP:
+                    offSetY = this.offSetY[0];
+                    break;
+                case DOWN:
+                    offSetY = this.offSetY[1];
+                    break;
+                case LEFT:
+                    offSetX = this.offsetX[0];
+                    break;
+                case RIGHT:
+                    offSetX = this.offsetX[1];
+                    break;
+            }
+
+            canvas.drawBitmap(mBitmapHeads[headIndex], (headLocation.x + offSetX) * mSegmentSize, (headLocation.y + offSetY) * mSegmentSize, paint);
             for (int i = 1; i < segmentLocations.size(); i++) {
                 canvas.drawBitmap(mBitmapBody, segmentLocations.get(i).x * mSegmentSize, segmentLocations.get(i).y * mSegmentSize, paint);
             }
