@@ -6,6 +6,9 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
+import android.media.MediaPlayer;
+
+import com.example.snakeysnake.R;
 
 import java.io.IOException;
 
@@ -16,6 +19,7 @@ public class SoundManager {
 
     private int mSmallerId;
     private int mCrashSoundId;
+    private MediaPlayer backGroundMusic;
 
     public SoundManager(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -46,9 +50,14 @@ public class SoundManager {
             descriptor = assetManager.openFd("pixel-death-66829.mp3");
             mSmallerId = mSoundPool.load(descriptor, 0);
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        backGroundMusic = MediaPlayer.create(context, R.raw.lifeofsinoriginalmix);
+        backGroundMusic.setLooping(true);
+
     }
 
     public void playEatSound() {
@@ -60,7 +69,13 @@ public class SoundManager {
     }
 
     public void playSmallerSound(){mSoundPool.play(mSmallerId, 1, 1, 0, 0, 1);}
+
     public void release() {
         mSoundPool.release();
     }
+
+    public MediaPlayer getBgMusic(){
+        return this.backGroundMusic;
+    }
+
 }
