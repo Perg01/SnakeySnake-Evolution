@@ -26,7 +26,7 @@ import java.util.Timer;
 
 public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, Drawable {
 
-//    private List<Apple> apples;
+    //    private List<Apple> apples;
     private List<LightningPowerUp> lightningPowerUps;
     private List<SizeUpPowerUp> sizeUpPowerUps;
     private static final int DEFAULT_TARGET_FPS = 5;
@@ -40,8 +40,9 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private SoundManager mSoundManager;
     private final int NUM_BLOCKS_WIDE = 40;
     private int mNumBlocksHigh;
-    private int mScore;
+    private int mScore = 0;
     private Canvas mCanvas;
+    private int mHighScore = 0;
     private SurfaceHolder mSurfaceHolder;
     private Paint mPaint;
     private Snake mSnake;
@@ -128,6 +129,12 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
 
     private boolean updateRequired() {
         return mNextFrameTime <= System.currentTimeMillis();
+    }
+
+    private void updateHighScore() {
+        if (mScore > mHighScore) {
+            mHighScore = mScore;
+        }
     }
 
     private void update() {
@@ -222,6 +229,13 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mCanvas.drawText(String.valueOf(mScore), 20, 120, mPaint);
     }
 
+    private void drawHighScore() {
+        mPaint.setColor(Color.argb(255, 255, 255, 255));
+        mPaint.setTextSize(120);
+        mPaint.setTypeface(Font.getCustomTypeface(getContext()));
+        mCanvas.drawText("High Score: " + mHighScore, 20, 220, mPaint);
+    }
+
     private void drawGameObjects() {
         mApple.draw(mCanvas, mPaint);
         mSnake.draw(mCanvas, mPaint);
@@ -255,6 +269,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
             mPaint.setTextSize(250);
             mPaint.setTypeface(Font.getCustomTypeface(getContext()));
             mCanvas.drawText(getResources().getString(R.string.tap_to_play), 450, 500, mPaint);
+            updateHighScore();
+            drawHighScore();
         }
     }
 
@@ -273,17 +289,12 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         paint.setTypeface(typeface); // Set custom font
 
         mCanvas.drawText("Steven Ngo", mCanvas.getWidth() - 450, 90, paint);
-        // Draw "Saboor Malik"
         mCanvas.drawText("Saboor Malik", mCanvas.getWidth() - 450, 165, paint);
         mCanvas.drawText("Jaspreet Singh", mCanvas.getWidth() - 450, 240, paint);
         mCanvas.drawText("Alexander Fails", mCanvas.getWidth() - 450, 315, paint);
 
 
     }
-
-
-
-
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
@@ -325,6 +336,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     }
 
     private void newGame() {
+        updateHighScore();
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
         mApple.spawn();
         lightningPowerUps.clear();
