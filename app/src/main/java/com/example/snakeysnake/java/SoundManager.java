@@ -20,6 +20,8 @@ public class SoundManager {
     private int mSmallerId;
     private int mCrashSoundId;
     private int mBlackHoldSoundId;
+    private int mBlackHoleRemoveId;
+    private int mSNovaCreateId;
     private final MediaPlayer backGroundMusic;
 
     public SoundManager(Context context) {
@@ -53,6 +55,10 @@ public class SoundManager {
 
             descriptor = assetManager.openFd("deepscanmp3-14662.mp3");
             mBlackHoldSoundId = mSoundPool.load(descriptor, 0);
+            descriptor = assetManager.openFd("shooting-star-2-104073.mp3");
+            mBlackHoleRemoveId = mSoundPool.load(descriptor, 0);
+            descriptor = assetManager.openFd("swoosh-30102023-173915.mp3");
+            mSNovaCreateId = mSoundPool.load(descriptor, 0);
 
 
         } catch (IOException e) {
@@ -75,6 +81,8 @@ public class SoundManager {
 
     public void playSmallerSound(){mSoundPool.play(mSmallerId, 1, 1, 0, 0, 1);}
     public void playBlackHoleSound(){mSoundPool.play(mBlackHoldSoundId, 1, 1, 0, 0, 1);}
+    public void playBlackHoleRemoveSound(){mSoundPool.play(mBlackHoleRemoveId, 2, 2, 0, 0, 1);}
+    public void playSNovaCreateSound(){mSoundPool.play(mSNovaCreateId, 1, 1, 0, 0, 1);}
 
     public void release() {
         mSoundPool.release();

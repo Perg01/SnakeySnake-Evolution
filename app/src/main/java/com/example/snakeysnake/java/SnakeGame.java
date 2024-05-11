@@ -29,6 +29,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private List<LightningPowerUp> lightningPowerUps;
     private List<SizeUpPowerUp> sizeUpPowerUps;
     private List<BlackHole> mBlackHoles;
+    private List<StarSuperNova> mSNovas;
     private static final int DEFAULT_TARGET_FPS = 5;
     private static int TARGET_FPS = DEFAULT_TARGET_FPS;
     private static final long MILLIS_PER_SECOND = 1000;
@@ -56,6 +57,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
     private double mPowerUpTimer;
 
     private double mBlackHoleTimer;
+    private double mNovaTimer;
     private boolean musicFlag = false;
 
 
@@ -88,6 +90,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         // separate list of power ups
         lightningPowerUps = new ArrayList<>();
         sizeUpPowerUps = new ArrayList<>();
+        mSNovas = new ArrayList<>();
 
         // seperate list of obsticles
         mBlackHoles = new ArrayList<>();
@@ -125,6 +128,12 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         BlackHole blackHole = new BlackHole(context, spawnRange, size);
         blackHole.spawn();
         mBlackHoles.add(blackHole);
+    }
+
+    private void spawnSNova(Context context, Point spawnRange, int size){
+        StarSuperNova sNova = new StarSuperNova(context, spawnRange, size);
+        sNova.spawn();
+        mSNovas.add(sNova);
     }
 
     @Override
@@ -173,6 +182,22 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                 break;
             }
         }
+
+        if(checkTimer(mNovaTimer) >= 10 && mSNovas.isEmpty()){
+            spawnSNova(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
+            mSoundManager.playSNovaCreateSound();
+        }
+
+        Iterator<StarSuperNova> sIterator = mSNovas.iterator();
+        while(sIterator.hasNext()){
+            StarSuperNova sNovaPowerUp = sIterator.next();
+            if(mSnake.checkCollision(sNovaPowerUp.getLocation())){
+                mBlackHoles.remove(mBlackHoles.size()-1);
+                mSoundManager.playBlackHoleRemoveSound();
+                sIterator.remove();
+                this.setSNovaTimer(System.nanoTime());
+            }
+        }
         Iterator<SizeUpPowerUp> mIterator = sizeUpPowerUps.iterator();
 
         //If snake eats mushroom grow *2 for 10 seconds
@@ -188,7 +213,6 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                     PowerUps mPowerUp = PowerUpDecoder.decodePowerUp("Mushroom");
                     //mPowerUp.applyPowerUps(this);
                     mSnake.doubleSize();
-                    mBlackHoles.remove(mBlackHoles.size()-1);
                     mIterator.remove();
                     this.setmPowerUpTimer(System.nanoTime());
                     mSoundManager.playEatSound();
@@ -274,6 +298,9 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         for(BlackHole blackHole : mBlackHoles){
             blackHole.draw(mCanvas, mPaint);
         }
+        for(StarSuperNova sNova: mSNovas){
+            sNova.draw(mCanvas, mPaint);
+        }
     }
 
     private void drawPauseButton() {
@@ -338,6 +365,7 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                     mSoundManager.getBgMusic().start();
                     musicFlag = !musicFlag;
                     this.setBlackHolesTimer(System.nanoTime());
+                    this.setSNovaTimer(System.nanoTime());
                 }
                 if (mPaused) {
                     if (mPauseButtonRect.contains(x, y)) {
@@ -355,7 +383,6 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
                             if (mSoundManager.getBgMusic().isPlaying()) {
                                 mSoundManager.getBgMusic().pause();
                             }
-                            //TODO reset black hole timer
 
                             mPaused = true;
                         }
@@ -383,10 +410,11 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         lightningPowerUps.clear();
         sizeUpPowerUps.clear();
         mBlackHoles.clear();
+        mSNovas.clear();
 
         spawnLightningPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
         spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
-        spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
+        //spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
         mScore = 0;
         mNextFrameTime = System.currentTimeMillis();
         mPlayerDead = true;
@@ -421,8 +449,8 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         this.mBlackHoleTimer = mBlackHoleTimer;
     }
 
-    public double getmBlackHoleTimer() {
-        return mBlackHoleTimer;
+    public void setSNovaTimer(double mNovaTimer){
+        this.mNovaTimer = mNovaTimer;
     }
 
     public double checkTimer(double startTime) {
