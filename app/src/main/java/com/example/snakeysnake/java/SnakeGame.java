@@ -429,6 +429,10 @@ public class SnakeGame extends SurfaceView implements Runnable, GameLifecycle, D
         mBlackHoles.clear();
         mSNovas.clear();
 
+        if(mSnake.isDoubleSize()){
+            mSnake.halfSize();
+        }
+
         spawnLightningPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
         spawnSizeUpPowerUp(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
         //spawnBlackHole(getContext(), new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), mSnake.getSegmentSize());
